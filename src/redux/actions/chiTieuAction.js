@@ -1,5 +1,5 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
-import {addChiTieu} from '../reducers/chiTieuReducer';
+import {addChiTieu,searchChiTieu} from '../reducers/chiTieuReducer';
 const api_url = 'https://65bb0b66b4d53c066553e4dc.mockapi.io/chiTieu';
 
 export const fetchChiTieuApi = () => {
@@ -96,3 +96,4 @@ export const searchChiTieuApi = createAsyncThunk(
     }
   }
 );
+

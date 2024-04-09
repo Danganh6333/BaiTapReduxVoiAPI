@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   addChiTieuApi,
   deleteChiTieuApi,
@@ -85,7 +85,12 @@ const QuanLyChiTieu = () => {
         console.log('Xóa thu chi thất bại', error);
       });
   };
-  
+  const handleSearchQueryChange = query => {
+    setSearchTieuDe(query);
+  };
+  const handleSearch = () => {
+    dispatch(searchChiTieuApi(searchTieuDe));
+  };
   const handleSaveUpdate = () => {
     let updatedData = {
       id: editItemId,
@@ -96,7 +101,7 @@ const QuanLyChiTieu = () => {
       soTien: editSoTien,
     };
     console.log(updatedData);
-    dispatch(updateChiTieuApi({ id: editItemId, data: updatedData }))
+    dispatch(updateChiTieuApi({id: editItemId, data: updatedData}))
       .then(result => {
         console.log('Update Chi Tiêu thành công');
         setIsModalVisible(false);
@@ -112,7 +117,7 @@ const QuanLyChiTieu = () => {
         console.log('Lỗi cập nhật chi tiêu', error);
       });
   };
-  
+
   const handleUpdateChiTieu = item => {
     setIsModalVisible(true);
     setEditItemId(item.id);
@@ -123,16 +128,20 @@ const QuanLyChiTieu = () => {
     setEditSoTien(item.soTien);
     setIsEditing(true);
   };
-  const handleSearch = () => {
-    // dispatch(searchChiTieuApi(searchTieuDe));
-  };
+
+  const filteredListChiTieu = useMemo(() => {
+    return listChiTieu.filter(item =>
+      item.tieuDe.toLowerCase().includes(searchTieuDe.toLowerCase()),
+    );
+  }, [listChiTieu, searchTieuDe]);
+
   return (
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.searchContainer}>
           <SearchBar
             placeholder="Tìm Kiếm Tiêu Đề"
-            onChangeText={txt => setSearchTieuDe(txt)}
+            onChangeText={handleSearchQueryChange}
             onSubmitEditing={() => handleSearch()}
           />
         </View>
@@ -187,8 +196,10 @@ const QuanLyChiTieu = () => {
           <Text style={styles.totalText}>Tổng số tiền chi: {totalChi}</Text>
         </View>
         <View style={styles.listContainer}>
-          {listChiTieu.map(row => (
-            <View key={row.id} style={styles.itemContainer}>
+          {filteredListChiTieu.map(row => (
+            <View
+              key={`${row.tieuDe}-${row.moTa}-${row.ngayThuChi}-${row.loaiThuChi}-${row.soTien}`}
+              style={styles.itemContainer}>
               <Text style={styles.itemTitle}>{row.tieuDe}</Text>
               <Text style={styles.itemDetail}>Mô tả: {row.moTa}</Text>
               <Text style={styles.itemDetail}>

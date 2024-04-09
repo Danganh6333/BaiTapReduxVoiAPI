@@ -3,6 +3,7 @@ import {
   addChiTieuApi,
   deleteChiTieuApi,
   updateChiTieuApi,
+  searchChiTieuApi
 } from '../actions/chiTieuAction';
 
 
@@ -17,7 +18,11 @@ const chiTieuSlice = createSlice({
     addChiTieu(state, action) {
       state.listChiTieu.push(action.payload);
     },
+    searchChiTieu(state, action) {
+      state.listChiTieu = action.payload;
+    },
   },
+  
   extraReducers: builder => {
     builder
       .addCase(deleteChiTieuApi.fulfilled, (state, action) => {
